@@ -32,7 +32,7 @@ server.get('/api/lessons', (req, res) => {
 })
 
 server.get('/api/lessons/:id', (req, res) => {
-    const {id} = req.params;
+    const { id } = req.params;
 
     Lessons.findById(id)
         .then(lesson => {
@@ -48,7 +48,7 @@ server.get('/api/lessons/:id', (req, res) => {
 })
 
 server.delete('/api/lessons/:id', (req, res) => {
-    const {id} = req.params
+    const { id } = req.params
 
     Lessons.remove(id)
         .then(count => {
@@ -60,6 +60,23 @@ server.delete('/api/lessons/:id', (req, res) => {
         })
         .catch(error => {
             res.status(500).json({ message: 'Unable to delete' })
+        })
+})
+
+server.patch('/api/lessons/:id', (req, res) => {
+    const { id } = req.params
+    const changes = req.body
+
+    Lessons.update(id, changes)
+        .then(lesson => {
+            if(lesson) {
+                res.status(200).json(lesson)
+            } else {
+                res.status(404).json({ message: 'Record not found' })
+            }
+        })
+        .catch(error => {
+            res.status(500).json({ message: 'Error updating record' })
         })
 })
 
