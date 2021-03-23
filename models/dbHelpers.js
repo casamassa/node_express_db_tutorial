@@ -47,11 +47,32 @@ async function addMessage(message, lesson_id) {
     return findMessageById(id)
 }
 
+function findLessonMessages(lesson_id) {
+    return db('lessons as l')
+        .join('messages as m', 'l.id', 'm.lesson_id')
+        .select(
+            'l.id as LessonID',
+            'l.name as LessonName',
+            'm.id as MessageID',
+            'm.sender',
+            'm.text'
+        )
+        .where({ lesson_id })
+}
+
+function removeMessage(id) {
+    return db('messages')
+        .where({ id })
+        .del()
+}
+
 module.exports = { 
     add, 
     find,
     findById,
     remove,
     update,
-    addMessage
+    addMessage,
+    findLessonMessages,
+    removeMessage
 }
