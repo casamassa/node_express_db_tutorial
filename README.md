@@ -18,6 +18,10 @@ To running migrations
 To rollback migrations
   > knex migrate:rollback
 
+Heroku CLI commands:
+
+To running the migration:
+  > heroku run knex migrate:latest -a node-db-tutorial11
 
 To inspect the SQLite database you can download a free tool on https://sqlitestudio.pl/
 
