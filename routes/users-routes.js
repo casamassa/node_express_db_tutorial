@@ -1,5 +1,6 @@
 const express = require('express')
 const Users = require('../models/dbHelpers')
+const bcrypt = require('bcryptjs')
 
 const router = express.Router()
 
@@ -11,6 +12,9 @@ router.post('/register', (req,res) => {
     if(!(username && password)) {
         return res.status(400).json({ message: 'Username and password required' })
     }
+
+    const hash = bcrypt.hashSync(credentials.password, 12)
+    credentials.password = hash
 
     Users.addUser(credentials)
     .then(user => { 
@@ -24,6 +28,26 @@ router.post('/register', (req,res) => {
         }
     })
 }) 
+
+router.post('/login', (req,res) => {
+    const { username, password } = req.body
+
+    if(!(username && password)) {
+        return res.status(400).json({ message: 'Username and password required' })
+    }
+
+    Users.findUserByUsername(username)
+    .then(user => {
+        if (user && bcrypt.compareSync(password, user.password)) {
+            res.status(200).json({ message: `Welcome ${user.username}` })
+        } else {
+            res.status(401).json({ message: 'Invalid credentials' })
+        }
+    })
+    .catch(error => {
+        res.status(500).json(error)
+    })
+})
 
 router.get('/', (req,res) => {
     Users.findAllUsers()
